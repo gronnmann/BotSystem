@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-client'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, UsersIcon, CrownIcon } from 'lucide-react'
@@ -27,7 +28,7 @@ export default function BotsystemList({ ownedSystems, memberSystems }: Botsystem
   const [loading, setLoading] = useState(false)
   const [botsystemName, setBotsystemName] = useState('')
   const router = useRouter()
-  const supabase = createClient()
+  const { user } = useAuth()
 
   async function createBotsystem(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -40,8 +41,6 @@ export default function BotsystemList({ ownedSystems, memberSystems }: Botsystem
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
       if (!user) {
         toast.error('No authenticated user found')
         router.push('/login')
@@ -65,7 +64,7 @@ export default function BotsystemList({ ownedSystems, memberSystems }: Botsystem
         setShowCreateForm(false)
         router.push(`/botsystem/${data.id}`)
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

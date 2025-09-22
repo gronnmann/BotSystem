@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-client'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 import { Enums } from '@/lib/database.types'
 
@@ -20,7 +21,7 @@ export default function ProfileSetupPage() {
   const [displayName, setDisplayName] = useState('')
   const [selectedColor, setSelectedColor] = useState<Enums<'profile_color'>>('blue')
   const router = useRouter()
-  const supabase = createClient()
+  const { user, refreshProfile } = useAuth()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -33,8 +34,6 @@ export default function ProfileSetupPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
       if (!user) {
         toast.error('No authenticated user found')
         router.push('/login')
@@ -52,9 +51,10 @@ export default function ProfileSetupPage() {
         toast.error('Failed to save profile: ' + error.message)
       } else {
         toast.success('Profile created successfully! 🎉')
+        await refreshProfile()
         router.push('/dashboard')
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

@@ -2,7 +2,7 @@
 
 import { useParams, useRouter, usePathname } from 'next/navigation'
 import { Tables } from '@/lib/database.types'
-import { ArrowLeftIcon, CrownIcon, UsersIcon, TrophyIcon, BookOpenIcon, AlertTriangleIcon } from 'lucide-react'
+import { ArrowLeftIcon, CrownIcon, UsersIcon, TrophyIcon } from 'lucide-react'
 import LogoutButton from '@/components/logout-button'
 
 interface BotsystemLayoutProps {
@@ -20,25 +20,11 @@ export default function BotsystemLayout({ botsystem, isOwner, children }: Botsys
   
   const tabs = [
     {
-      id: 'leaderboard',
-      label: 'Leaderboard',
+      id: 'dashboard',
+      label: 'Dashboard',
       icon: TrophyIcon,
       href: baseUrl,
       isActive: pathname === baseUrl
-    },
-    {
-      id: 'rules',
-      label: 'Rules',
-      icon: BookOpenIcon,
-      href: `${baseUrl}/rules`,
-      isActive: pathname === `${baseUrl}/rules`
-    },
-    {
-      id: 'infractions',
-      label: 'Infractions',
-      icon: AlertTriangleIcon,
-      href: `${baseUrl}/infractions`,
-      isActive: pathname === `${baseUrl}/infractions`
     },
     {
       id: 'members',

@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Leaderboard from './leaderboard'
+import RulesManager from './rules-manager'
+import InfractionsManager from './infractions-manager'
 
 interface BotsystemPageProps {
   params: Promise<{
@@ -17,18 +19,77 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
     redirect('/login')
   }
 
-  // Get penalty data for leaderboard
+  // Check if user is owner
+  const { data: botsystem } = await supabase
+    .from('botsystems')
+    .select('owner_id')
+    .eq('id', id)
+    .single()
+
+  const isOwner = botsystem?.owner_id === user.id
+
+  // Get all data needed for the combined dashboard
+  
+  // 1. Get penalties for leaderboard and infractions
   const { data: penalties } = await supabase
     .from('penalties')
     .select(`
-      units,
-      user_id,
+      *,
       profiles!penalties_user_id_fkey (
+        display_name,
+        color
+      ),
+      created_by_profile:profiles!penalties_created_by_fkey (
+        display_name,
+        color
+      ),
+      rules (
+        title,
+        default_units
+      )
+    `)
+    .eq('botsystem_id', id)
+    .order('created_at', { ascending: false })
+
+  // 2. Get all rules for this botsystem
+  const { data: allRules } = await supabase
+    .from('rules')
+    .select('*')
+    .eq('botsystem_id', id)
+    .order('created_at', { ascending: false })
+
+  // 3. Get active rules for infractions form
+  const { data: activeRules } = await supabase
+    .from('rules')
+    .select('*')
+    .eq('botsystem_id', id)
+    .eq('is_active', true)
+    .order('title')
+
+  // 4. Get members for user selection in infractions
+  const { data: members } = await supabase
+    .from('botsystem_members')
+    .select(`
+      user_id,
+      profiles!botsystem_members_user_id_fkey (
         display_name,
         color
       )
     `)
     .eq('botsystem_id', id)
+
+  // 5. Get the owner for user selection
+  const { data: owner } = await supabase
+    .from('botsystems')
+    .select(`
+      owner_id,
+      profiles!botsystems_owner_id_fkey (
+        display_name,
+        color
+      )
+    `)
+    .eq('id', id)
+    .single()
 
   // Calculate leaderboard data
   const leaderboardData = penalties?.reduce((acc, penalty) => {
@@ -53,5 +114,36 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
   const sortedLeaderboard = Object.values(leaderboardData || {})
     .sort((a, b) => b.total_units - a.total_units)
 
-  return <Leaderboard data={sortedLeaderboard} />
+  // Combine all users for infractions
+  const allUsers = [
+    ...(members || []),
+    ...(owner ? [{
+      user_id: owner.owner_id,
+      profiles: owner.profiles
+    }] : [])
+  ]
+
+  return (
+    <div className="space-y-8">
+      {/* Leaderboard Section */}
+      <section>
+        <Leaderboard data={sortedLeaderboard} />
+      </section>
+
+      {/* Rules Section */}
+      <section>
+        <RulesManager rules={allRules || []} botsystemId={id} isOwner={isOwner} />
+      </section>
+
+      {/* Infractions Section */}
+      <section>
+        <InfractionsManager 
+          penalties={penalties || []}
+          rules={activeRules || []}
+          users={allUsers}
+          botsystemId={id}
+        />
+      </section>
+    </div>
+  )
 }

@@ -1,24 +1,38 @@
+'use client'
+
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase-server'
+import { useAuth } from '@/contexts/auth-context'
+import { useEffect } from 'react'
 
-export default async function HomePage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export default function HomePage() {
+  const { user, profile, loading } = useAuth()
 
-  if (!user) {
-    redirect('/login')
+  useEffect(() => {
+    if (loading) return
+
+    if (!user) {
+      redirect('/login')
+      return
+    }
+
+    if (!profile) {
+      redirect('/profile-setup')
+      return
+    }
+
+    redirect('/dashboard')
+  }, [user, profile, loading])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
-  // Check if user has completed profile setup
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('display_name, color')
-    .eq('user_id', user.id)
-    .single()
-
-  if (!profile) {
-    redirect('/profile-setup')
-  }
-
-  redirect('/dashboard')
+  return null
 }

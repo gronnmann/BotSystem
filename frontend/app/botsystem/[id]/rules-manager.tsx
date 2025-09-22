@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-client'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, BookOpenIcon, TrashIcon, EyeOffIcon, EyeIcon } from 'lucide-react'
+import { useAuth } from '@/contexts/auth-context'
 
 interface RulesManagerProps {
   rules: Tables<'rules'>[]
@@ -19,7 +20,6 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
   const [ruleTitle, setRuleTitle] = useState('')
   const [defaultUnits, setDefaultUnits] = useState(1)
   const router = useRouter()
-  const supabase = createClient()
 
   async function createRule(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -55,7 +55,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
         setShowCreateForm(false)
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -75,7 +75,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
         toast.success(isActive ? 'Rule deactivated' : 'Rule activated')
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     }
   }
@@ -97,7 +97,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
         toast.success('Rule deleted')
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     }
   }

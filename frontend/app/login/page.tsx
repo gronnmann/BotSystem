@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase-client'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
-  const supabase = createClient()
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -27,7 +26,7 @@ export default function LoginPage() {
         toast.success('Check your email for the login link!')
         setEmail('')
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

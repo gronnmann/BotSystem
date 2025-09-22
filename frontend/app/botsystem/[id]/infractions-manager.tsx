@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-client'
+import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, AlertTriangleIcon, UserIcon, CalendarIcon } from 'lucide-react'
@@ -54,7 +55,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
   const [customUnits, setCustomUnits] = useState('')
   const [note, setNote] = useState('')
   const router = useRouter()
-  const supabase = createClient()
+  const { user } = useAuth()
 
   async function createPenalty(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -80,8 +81,6 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
       if (!user) {
         toast.error('No authenticated user found')
         router.push('/login')
@@ -110,7 +109,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
         setShowCreateForm(false)
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)
@@ -258,7 +257,6 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
           <div className="divide-y divide-gray-200">
             {penalties.map((penalty) => {
               const userColor = penalty.profiles?.color as keyof typeof COLOR_CLASSES || 'blue'
-              const creatorColor = penalty.created_by_profile?.color as keyof typeof COLOR_CLASSES || 'blue'
 
               return (
                 <div key={penalty.id} className="p-6">
