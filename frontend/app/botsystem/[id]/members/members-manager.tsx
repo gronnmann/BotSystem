@@ -104,7 +104,7 @@ export default function MembersManager({ botsystem, members, isOwner }: MembersM
         setShowAddForm(false)
         router.refresh()
       }
-    } catch (error) {
+    } catch (_) {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

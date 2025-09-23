@@ -61,7 +61,7 @@ export default function Leaderboard({ data }: LeaderboardProps) {
           {data.map((entry, index) => {
             const position = index + 1
             const colorClass = COLOR_CLASSES[entry.color as keyof typeof COLOR_CLASSES] || COLOR_CLASSES.blue
-            const [bgColor, textColor] = colorClass.split(' ')
+            const [bgColor, _] = colorClass.split(' ')
 
             return (
               <div

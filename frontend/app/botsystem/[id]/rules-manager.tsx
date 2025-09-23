@@ -6,7 +6,6 @@ import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, BookOpenIcon, TrashIcon, EyeOffIcon, EyeIcon } from 'lucide-react'
-import { useAuth } from '@/contexts/auth-context'
 
 interface RulesManagerProps {
   rules: Tables<'rules'>[]

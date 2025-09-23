@@ -27,10 +27,18 @@ export default function DashboardPage() {
         const { data: systems } = await supabase
           .from('botsystems')
           .select('*')
+          .throwOnError();
 
-          setAllSystems(systems)
+        // Add role information to each system
+        const systemsWithRole = systems.map(system => ({
+          ...system,
+          role: (system.owner_id === user.id ? 'owner' : 'member') as 'owner' | 'member'
+        }))
+
+        setAllSystems(systemsWithRole)
       } catch (error) {
         console.error('Error fetching data:', error)
+        setAllSystems([]) // Set empty array on error
       } finally {
         setDataLoading(false)
       }
