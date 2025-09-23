@@ -8,22 +8,11 @@ import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, UsersIcon, CrownIcon } from 'lucide-react'
 
-type BotsystemWithProfile = Tables<'botsystems'> & {
-  profiles: Pick<Tables<'profiles'>, 'display_name' | 'color'>
-}
-
-type MemberSystemData = {
-  botsystem_id: string
-  role: string
-  botsystems: BotsystemWithProfile
-}
-
 interface BotsystemListProps {
-  ownedSystems: Tables<'botsystems'>[]
-  memberSystems: MemberSystemData[]
+  systems: Array<Tables<'botsystems'> & { role: 'owner' | 'member' }>
 }
 
-export default function BotsystemList({ ownedSystems, memberSystems }: BotsystemListProps) {
+export default function BotsystemList({ systems }: BotsystemListProps) {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [loading, setLoading] = useState(false)
   const [botsystemName, setBotsystemName] = useState('')
@@ -70,14 +59,6 @@ export default function BotsystemList({ ownedSystems, memberSystems }: Botsystem
       setLoading(false)
     }
   }
-
-  const allSystems = [
-    ...ownedSystems.map(system => ({ ...system, role: 'owner' as const })),
-    ...memberSystems.map(item => ({ 
-      ...item.botsystems, 
-      role: item.role as 'owner' | 'member' 
-    }))
-  ]
 
   return (
     <div className="space-y-6">
@@ -140,9 +121,9 @@ export default function BotsystemList({ ownedSystems, memberSystems }: Botsystem
       )}
 
       {/* Existing Botsystems */}
-      {allSystems.length > 0 ? (
+      {systems.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {allSystems.map((system) => (
+          {systems.map((system) => (
             <div
               key={system.id}
               className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200 cursor-pointer"

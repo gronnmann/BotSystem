@@ -21,14 +21,14 @@ export default function BotsystemLayout({ botsystem, isOwner, children }: Botsys
   const tabs = [
     {
       id: 'dashboard',
-      label: 'Dashboard',
+      label: 'Fremside',
       icon: TrophyIcon,
       href: baseUrl,
       isActive: pathname === baseUrl
     },
     {
       id: 'members',
-      label: 'Members',
+      label: 'Medlemmer',
       icon: UsersIcon,
       href: `${baseUrl}/members`,
       isActive: pathname === `${baseUrl}/members`

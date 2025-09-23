@@ -77,19 +77,7 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
       )
     `)
     .eq('botsystem_id', id)
-
-  // 5. Get the owner for user selection
-  const { data: owner } = await supabase
-    .from('botsystems')
-    .select(`
-      owner_id,
-      profiles!botsystems_owner_id_fkey (
-        display_name,
-        color
-      )
-    `)
-    .eq('id', id)
-    .single()
+    .throwOnError()
 
   // Calculate leaderboard data
   const leaderboardData = penalties?.reduce((acc, penalty) => {
@@ -114,15 +102,6 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
   const sortedLeaderboard = Object.values(leaderboardData || {})
     .sort((a, b) => b.total_units - a.total_units)
 
-  // Combine all users for infractions
-  const allUsers = [
-    ...(members || []),
-    ...(owner ? [{
-      user_id: owner.owner_id,
-      profiles: owner.profiles
-    }] : [])
-  ]
-
   return (
     <div className="space-y-8">
       {/* Leaderboard Section */}
@@ -140,7 +119,7 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
         <InfractionsManager 
           penalties={penalties || []}
           rules={activeRules || []}
-          users={allUsers}
+          users={members}
           botsystemId={id}
         />
       </section>

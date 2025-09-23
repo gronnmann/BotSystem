@@ -42,28 +42,17 @@ function getRankColor(position: number) {
 
 export default function Leaderboard({ data }: LeaderboardProps) {
   if (data.length === 0) {
-    return (
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <div className="text-center">
-          <TrophyIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">No penalties yet!</h2>
-          <p className="text-gray-500">
-            The leaderboard will appear once some penalties are added. 
-            Who will be the first to earn their place? 🎯
-          </p>
-        </div>
-      </div>
-    )
+    return null;
   }
 
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          🏆 Penalty Leaderboard
+          🏆 Toppliste
         </h2>
         <p className="text-gray-600">
-          Who&apos;s collected the most penalty units? 🍻
+          Hvem har flest kryss? 🍻
         </p>
       </div>
 
@@ -107,7 +96,7 @@ export default function Leaderboard({ data }: LeaderboardProps) {
                     {entry.total_units}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {entry.total_units === 1 ? 'unit' : 'units'}
+                    {entry.total_units === 1 ? 'enhet' : 'enheter'}
                   </div>
                 </div>
 
@@ -139,19 +128,19 @@ export default function Leaderboard({ data }: LeaderboardProps) {
           <div className="text-2xl font-bold text-purple-600">
             {data.reduce((sum, entry) => sum + entry.total_units, 0)}
           </div>
-          <div className="text-gray-500">Total Units</div>
+          <div className="text-gray-500">Kryss Totalt</div>
         </div>
         <div className="bg-white rounded-lg shadow-md p-4 text-center">
           <div className="text-2xl font-bold text-blue-600">
             {data.length}
           </div>
-          <div className="text-gray-500">Active Members</div>
+          <div className="text-gray-500">Aktive Medlemmer</div>
         </div>
         <div className="bg-white rounded-lg shadow-md p-4 text-center">
           <div className="text-2xl font-bold text-green-600">
             {data.length > 0 ? Math.round(data.reduce((sum, entry) => sum + entry.total_units, 0) / data.length) : 0}
           </div>
-          <div className="text-gray-500">Average Units</div>
+          <div className="text-gray-500">Gjennomsnittlige kryss</div>
         </div>
       </div>
     </div>

@@ -7,21 +7,10 @@ import { supabase } from '@/lib/supabase'
 import { Tables } from '@/lib/database.types'
 import BotsystemList from './botsystem-list'
 
-type BotsystemWithProfile = Tables<'botsystems'> & {
-  profiles: Pick<Tables<'profiles'>, 'display_name' | 'color'>
-}
-
-type MemberSystemData = {
-  botsystem_id: string
-  role: string
-  botsystems: BotsystemWithProfile
-}
-
 export default function DashboardPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const [ownedSystems, setOwnedSystems] = useState<Tables<'botsystems'>[]>([])
-  const [memberSystems, setMemberSystems] = useState<MemberSystemData[]>([])
+  const [allSystems, setAllSystems] = useState<Array<Tables<'botsystems'> & { role: 'owner' | 'member' }>>([])
   const [dataLoading, setDataLoading] = useState(true)
 
   useEffect(() => {
@@ -34,34 +23,12 @@ export default function DashboardPage() {
 
     const fetchData = async () => {
       try {
-        // Get user's botsystems
-        const { data: owned } = await supabase
+        // Get all botsystems where user is owner
+        const { data: systems } = await supabase
           .from('botsystems')
           .select('*')
-          .eq('owner_id', user.id)
-          .order('created_at', { ascending: false })
 
-        const { data: member } = await supabase
-          .from('botsystem_members')
-          .select(`
-            botsystem_id,
-            role,
-            botsystems (
-              id,
-              name,
-              created_at,
-              owner_id,
-              profiles (
-                display_name,
-                color
-              )
-            )
-          `)
-          .eq('user_id', user.id)
-          .order('added_at', { ascending: false })
-
-        setOwnedSystems(owned || [])
-        setMemberSystems(member || [])
+          setAllSystems(systems)
       } catch (error) {
         console.error('Error fetching data:', error)
       } finally {
@@ -96,8 +63,7 @@ export default function DashboardPage() {
         </header>
 
         <BotsystemList 
-          ownedSystems={ownedSystems}
-          memberSystems={memberSystems}
+          systems={allSystems}
         />
       </div>
     </div>

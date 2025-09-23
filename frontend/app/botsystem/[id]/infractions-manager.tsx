@@ -123,11 +123,8 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            ⚠️ Infractions
+            ⚠️ Bøter
           </h2>
-          <p className="text-gray-600">
-            Track penalty infractions and their details
-          </p>
         </div>
         
         {!showCreateForm && (
@@ -144,12 +141,12 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
       {/* Create Form */}
       {showCreateForm && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Add New Penalty</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">Meld Bot</h3>
           <form onSubmit={createPenalty} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-2">
-                  User
+                  Person
                 </label>
                 <select
                   id="userId"
@@ -159,17 +156,17 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   disabled={loading}
                 >
-                  <option value="">Select a user...</option>
+                  <option value="">Velg en person...</option>
                   {users.map((user) => (
                     <option key={user.user_id} value={user.user_id}>
-                      {user.profiles?.display_name || 'Unknown User'}
+                      {user.profiles?.display_name || 'Ukjent Bruker'}
                     </option>
                   ))}
                 </select>
               </div>
               <div>
                 <label htmlFor="ruleId" className="block text-sm font-medium text-gray-700 mb-2">
-                  Rule Broken
+                  Brutt Regel
                 </label>
                 <select
                   id="ruleId"
@@ -179,7 +176,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   disabled={loading}
                 >
-                  <option value="">Select a rule...</option>
+                  <option value="">Velg en regel...</option>
                   {rules.map((rule) => (
                     <option key={rule.id} value={rule.id}>
                       {rule.title} ({rule.default_units} units)
@@ -190,7 +187,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
             </div>
             <div>
               <label htmlFor="customUnits" className="block text-sm font-medium text-gray-700 mb-2">
-                Custom Units (optional)
+                Antall Enheter
                 {selectedRule && (
                   <span className="text-gray-500 ml-2">
                     Default: {selectedRule.default_units} units
@@ -211,7 +208,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
             </div>
             <div>
               <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-2">
-                Note (optional)
+                Notat (valgfritt)
               </label>
               <textarea
                 id="note"
@@ -244,7 +241,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
                 disabled={loading}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200"
               >
-                Cancel
+                Avbryt
               </button>
             </div>
           </form>
@@ -265,10 +262,10 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
                       <div className={`w-3 h-3 rounded-full ${COLOR_CLASSES[userColor]}`} />
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {penalty.profiles?.display_name || 'Unknown User'}
+                          {penalty.profiles?.display_name || 'Ukjent Person'}
                         </h3>
                         <p className="text-gray-600">
-                          {penalty.rules?.title || 'Unknown Rule'}
+                          {penalty.rules?.title || 'Ukjent Regel'}
                         </p>
                       </div>
                     </div>
@@ -277,7 +274,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
                         {penalty.units}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {penalty.units === 1 ? 'unit' : 'units'}
+                        {penalty.units === 1 ? 'enhet' : 'enheter'}
                       </div>
                     </div>
                   </div>
@@ -299,7 +296,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
                     <div className="flex items-center space-x-1">
                       <UserIcon className="w-4 h-4" />
                       <span>
-                        Added by {penalty.created_by_profile?.display_name || 'Unknown'}
+                        Meldt av {penalty.created_by_profile?.display_name || 'Ukjent'}
                       </span>
                     </div>
                   </div>
@@ -312,9 +309,9 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="text-center">
             <AlertTriangleIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No infractions yet!</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Ingen bøter enda!</h3>
             <p className="text-gray-500 mb-4">
-              No penalties have been recorded yet. Add the first one to get started!
+              Ingen regelbrudd har blitt registrert enda. For en flink gruppe :)
             </p>
           </div>
         </div>

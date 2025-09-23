@@ -107,11 +107,8 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            📋 Rules
+            📋 Regler
           </h2>
-          <p className="text-gray-600">
-            Manage the rules and their penalty units
-          </p>
         </div>
         
         {isOwner && !showCreateForm && (
@@ -128,11 +125,11 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
       {/* Create Form */}
       {isOwner && showCreateForm && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Add New Rule</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">Ny Regel</h3>
           <form onSubmit={createRule} className="space-y-4">
             <div>
               <label htmlFor="ruleTitle" className="block text-sm font-medium text-gray-700 mb-2">
-                Rule Title
+                Regel
               </label>
               <input
                 id="ruleTitle"
@@ -142,13 +139,13 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
                 required
                 maxLength={100}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="e.g., Being late to meetings"
+                placeholder="f. eks. For sein til møte"
                 disabled={loading}
               />
             </div>
             <div>
               <label htmlFor="defaultUnits" className="block text-sm font-medium text-gray-700 mb-2">
-                Default Penalty Units
+                Antall Kryss
               </label>
               <input
                 id="defaultUnits"
@@ -168,7 +165,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
                 disabled={loading}
                 className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
               >
-                {loading ? 'Creating...' : 'Create Rule'}
+                {loading ? 'Oppretter regel...' : 'Opprett Regel'}
               </button>
               <button
                 type="button"
@@ -180,7 +177,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
                 disabled={loading}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200"
               >
-                Cancel
+                Avbryt
               </button>
             </div>
           </form>
@@ -204,16 +201,16 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
                       </h3>
                       {!rule.is_active && (
                         <span className="px-2 py-1 text-xs bg-gray-200 text-gray-600 rounded-full">
-                          Inactive
+                          Inakriv
                         </span>
                       )}
                     </div>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       <span>
-                        <strong>{rule.default_units}</strong> penalty {rule.default_units === 1 ? 'unit' : 'units'}
+                        <strong>{rule.default_units}</strong> {rule.default_units === 1 ? 'enhet' : 'enheter'}
                       </span>
                       <span>
-                        Created {new Date(rule.created_at || '').toLocaleDateString()}
+                        Laga {new Date(rule.created_at || '').toLocaleDateString()}
                       </span>
                     </div>
                   </div>
@@ -253,13 +250,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="text-center">
             <BookOpenIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No rules yet!</h3>
-            <p className="text-gray-500 mb-4">
-              {isOwner 
-                ? "Create your first rule to start tracking penalties." 
-                : "The owner hasn't created any rules yet."
-              }
-            </p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Ingen regler enda!</h3>
           </div>
         </div>
       )}

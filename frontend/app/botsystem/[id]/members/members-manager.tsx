@@ -58,7 +58,7 @@ export default function MembersManager({ botsystem, members, isOwner }: MembersM
           .from('profiles')
           .select('*')
           .or(`display_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
-          .limit(10)
+          .limit(5)
 
         // Filter out users who are already members or the owner
         const existingUserIds = new Set([
