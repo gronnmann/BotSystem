@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { supabaseClient } from '@/lib/supabase-client'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, BookOpenIcon, TrashIcon, EyeOffIcon, EyeIcon } from 'lucide-react'
@@ -22,7 +22,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
 
   async function createRule(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    
+
     if (!ruleTitle.trim()) {
       toast.error('Please enter a rule title')
       return
@@ -36,7 +36,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
     setLoading(true)
 
     try {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('rules')
         .insert({
           botsystem_id: botsystemId,
@@ -63,7 +63,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
 
   async function toggleRuleActive(ruleId: string, isActive: boolean) {
     try {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('rules')
         .update({ is_active: !isActive })
         .eq('id', ruleId)
@@ -85,7 +85,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
     }
 
     try {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('rules')
         .delete()
         .eq('id', ruleId)
@@ -109,7 +109,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
             📋 Regler
           </h2>
         </div>
-        
+
         {isOwner && !showCreateForm && (
           <button
             onClick={() => setShowCreateForm(true)}
@@ -213,7 +213,7 @@ export default function RulesManager({ rules, botsystemId, isOwner }: RulesManag
                       </span>
                     </div>
                   </div>
-                  
+
                   {isOwner && (
                     <div className="flex items-center space-x-2">
                       <button

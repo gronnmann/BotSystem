@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 import { Enums } from '@/lib/database.types'
+import { supabaseClient} from '@/lib/supabase-client'
 
 const COLOR_OPTIONS = [
   { value: 'blue' as const, label: 'Blue', bgColor: 'bg-blue-500', textColor: 'text-blue-500' },
@@ -21,11 +21,17 @@ export default function ProfileSetupPage() {
   const [displayName, setDisplayName] = useState('')
   const [selectedColor, setSelectedColor] = useState<Enums<'profile_color'>>('blue')
   const router = useRouter()
-  const { user, refreshProfile } = useAuth()
+  const { user, refreshProfile, profile } = useAuth()
+
+  useEffect(() => {
+    if (profile) {
+      router.push('/')
+    }
+  }, [profile, router])
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    
+
     if (!displayName.trim()) {
       toast.error('Please enter a display name')
       return
@@ -40,7 +46,7 @@ export default function ProfileSetupPage() {
         return
       }
 
-      const { error } = await supabase.from('profiles').upsert({
+      const { error } = await supabaseClient.from('profiles').upsert({
         user_id: user.id,
         email: user.email!,
         display_name: displayName.trim(),
@@ -52,7 +58,7 @@ export default function ProfileSetupPage() {
       } else {
         toast.success('Profile created successfully! 🎉')
         await refreshProfile()
-        router.push('/dashboard')
+        router.push('/')
       }
     } catch {
       toast.error('An unexpected error occurred')

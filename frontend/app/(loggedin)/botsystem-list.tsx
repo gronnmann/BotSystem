@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
-import { PlusIcon, UsersIcon, CrownIcon } from 'lucide-react'
+import { PlusIcon, UsersIcon } from 'lucide-react'
+import { supabaseClient } from '@/lib/supabase-client'
 
 interface BotsystemListProps {
-  systems: Array<Tables<'botsystems'> & { role: 'owner' | 'member' }>
+  systems: Tables<"botsystems">[]
 }
 
 export default function BotsystemList({ systems }: BotsystemListProps) {
@@ -21,7 +21,7 @@ export default function BotsystemList({ systems }: BotsystemListProps) {
 
   async function createBotsystem(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    
+
     if (!botsystemName.trim()) {
       toast.error('Please enter a botsystem name')
       return
@@ -36,7 +36,7 @@ export default function BotsystemList({ systems }: BotsystemListProps) {
         return
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('botsystems')
         .insert({
           name: botsystemName.trim(),
@@ -134,14 +134,7 @@ export default function BotsystemList({ systems }: BotsystemListProps) {
                   {system.name}
                 </h3>
                 <div className="flex items-center space-x-1 text-sm">
-                  {system.role === 'owner' ? (
-                    <CrownIcon className="w-4 h-4 text-yellow-500" />
-                  ) : (
-                    <UsersIcon className="w-4 h-4 text-blue-500" />
-                  )}
-                  <span className={system.role === 'owner' ? 'text-yellow-600' : 'text-blue-600'}>
-                    {system.role === 'owner' ? 'Owner' : 'Member'}
-                  </span>
+                  <UsersIcon className="w-4 h-4 text-blue-500" />
                 </div>
               </div>
               <p className="text-gray-500 text-sm">

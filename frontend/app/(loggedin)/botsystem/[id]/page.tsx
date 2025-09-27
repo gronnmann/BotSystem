@@ -1,8 +1,12 @@
-import { redirect } from 'next/navigation'
+"use client"
+import { redirect, useParams } from 'next/navigation'
 import Leaderboard from './leaderboard'
 import RulesManager from './rules-manager'
 import InfractionsManager from './infractions-manager'
-import supabaseClient from '@/lib/supabase-client'
+import {supabaseClient} from '@/lib/supabase-client'
+import { useAuth } from '@/contexts/auth-context'
+import { useBotSystem } from '@/queries/queries'
+import LoadingScreen from '@/components/loading-screen'
 
 interface BotsystemPageProps {
   params: Promise<{
@@ -10,25 +14,20 @@ interface BotsystemPageProps {
   }>
 }
 
-export default async function BotsystemPage({ params }: BotsystemPageProps) {
-  const { id } = await params
-  const { data: { user } } = await supabaseClient.auth.getUser()
+export default function BotsystemPage({ params }: BotsystemPageProps) {
+  const { id } = useParams<{ id: string }>()
+  
+  const { data, isLoading, isError } = useBotSystem(id);
+  const { user } = useAuth()
 
-  if (!user) {
-    redirect('/login')
+  const isOwner = data?.owner_id === user!.id
+
+  if (isLoading) {
+    return <LoadingScreen text="Laster inn botsystem..." />
   }
 
-  // Check if user is owner
-  const { data: botsystem } = await supabaseClient
-    .from('botsystems')
-    .select('owner_id')
-    .eq('id', id)
-    .single()
-
-  const isOwner = botsystem?.owner_id === user.id
-
   // Get all data needed for the combined dashboard
-  
+
   // 1. Get penalties for leaderboard and infractions
   const { data: penalties } = await supabaseClient
     .from('penalties')
@@ -115,7 +114,7 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
 
       {/* Infractions Section */}
       <section>
-        <InfractionsManager 
+        <InfractionsManager
           penalties={penalties || []}
           rules={activeRules || []}
           users={members}

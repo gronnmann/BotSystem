@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, AlertTriangleIcon, UserIcon, CalendarIcon } from 'lucide-react'
+import { supabaseClient} from '@/lib/supabase-client'
 
 type PenaltyWithDetails = Tables<'penalties'> & {
   profiles: {
@@ -59,7 +59,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
 
   async function createPenalty(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    
+
     if (!selectedUserId) {
       toast.error('Please select a user')
       return
@@ -87,7 +87,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
         return
       }
 
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('penalties')
         .insert({
           botsystem_id: botsystemId,
@@ -126,7 +126,7 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
             ⚠️ Bøter
           </h2>
         </div>
-        
+
         {!showCreateForm && (
           <button
             onClick={() => setShowCreateForm(true)}
@@ -278,13 +278,13 @@ export default function InfractionsManager({ penalties, rules, users, botsystemI
                       </div>
                     </div>
                   </div>
-                  
+
                   {penalty.note && (
                     <div className="mb-3 p-3 bg-gray-50 rounded-lg">
                       <p className="text-gray-700 text-sm">{penalty.note}</p>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
                       <CalendarIcon className="w-4 h-4" />
