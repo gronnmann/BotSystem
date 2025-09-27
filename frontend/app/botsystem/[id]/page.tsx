@@ -1,8 +1,8 @@
-import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import Leaderboard from './leaderboard'
 import RulesManager from './rules-manager'
 import InfractionsManager from './infractions-manager'
+import supabaseClient from '@/lib/supabase-client'
 
 interface BotsystemPageProps {
   params: Promise<{
@@ -12,15 +12,14 @@ interface BotsystemPageProps {
 
 export default async function BotsystemPage({ params }: BotsystemPageProps) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await supabaseClient.auth.getUser()
 
   if (!user) {
     redirect('/login')
   }
 
   // Check if user is owner
-  const { data: botsystem } = await supabase
+  const { data: botsystem } = await supabaseClient
     .from('botsystems')
     .select('owner_id')
     .eq('id', id)
@@ -31,7 +30,7 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
   // Get all data needed for the combined dashboard
   
   // 1. Get penalties for leaderboard and infractions
-  const { data: penalties } = await supabase
+  const { data: penalties } = await supabaseClient
     .from('penalties')
     .select(`
       *,
@@ -52,14 +51,14 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
     .order('created_at', { ascending: false })
 
   // 2. Get all rules for this botsystem
-  const { data: allRules } = await supabase
+  const { data: allRules } = await supabaseClient
     .from('rules')
     .select('*')
     .eq('botsystem_id', id)
     .order('created_at', { ascending: false })
 
   // 3. Get active rules for infractions form
-  const { data: activeRules } = await supabase
+  const { data: activeRules } = await supabaseClient
     .from('rules')
     .select('*')
     .eq('botsystem_id', id)
@@ -67,7 +66,7 @@ export default async function BotsystemPage({ params }: BotsystemPageProps) {
     .order('title')
 
   // 4. Get members for user selection in infractions
-  const { data: members } = await supabase
+  const { data: members } = await supabaseClient
     .from('botsystem_members')
     .select(`
       user_id,

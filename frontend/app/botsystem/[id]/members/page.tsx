@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import MembersManager from './members-manager'
+import supabaseClient from '@/lib/supabase-client'
 
 interface MembersPageProps {
   params: Promise<{
@@ -10,15 +10,14 @@ interface MembersPageProps {
 
 export default async function MembersPage({ params }: MembersPageProps) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await supabaseClient.auth.getUser()
 
   if (!user) {
     redirect('/login')
   }
 
   // Check if user is owner
-  const { data: botsystem } = await supabase
+  const { data: botsystem } = await supabaseClient
     .from('botsystems')
     .select('*, profiles!botsystems_owner_id_fkey(display_name, color)')
     .eq('id', id)
@@ -27,7 +26,7 @@ export default async function MembersPage({ params }: MembersPageProps) {
   const isOwner = botsystem?.owner_id === user.id
 
   // Get members
-  const { data: members } = await supabase
+  const { data: members } = await supabaseClient
     .from('botsystem_members')
     .select(`
       *,

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase-client'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
 import { PlusIcon, UsersIcon, CrownIcon, SearchIcon, TrashIcon } from 'lucide-react'
+import supabaseClient from '@/lib/supabase-client'
 
 type BotsystemWithOwner = Tables<'botsystems'> & {
   profiles: {
@@ -43,7 +43,6 @@ export default function MembersManager({ botsystem, members, isOwner }: MembersM
   const [searchResults, setSearchResults] = useState<Tables<'profiles'>[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     if (searchQuery.trim().length < 2) {
@@ -54,7 +53,7 @@ export default function MembersManager({ botsystem, members, isOwner }: MembersM
     const searchUsers = async () => {
       setSearchLoading(true)
       try {
-        const { data } = await supabase
+        const { data } = await supabaseClient
           .from('profiles')
           .select('*')
           .or(`display_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`)
@@ -80,14 +79,14 @@ export default function MembersManager({ botsystem, members, isOwner }: MembersM
 
     const debounceTimeout = setTimeout(searchUsers, 300)
     return () => clearTimeout(debounceTimeout)
-  }, [searchQuery, botsystem?.owner_id, members, supabase])
+  }, [searchQuery, botsystem?.owner_id, members])
 
   async function addMember(userId: string) {
     if (!botsystem) return
 
     setLoading(true)
     try {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('botsystem_members')
         .insert({
           botsystem_id: botsystem.id,
@@ -119,7 +118,7 @@ export default function MembersManager({ botsystem, members, isOwner }: MembersM
     }
 
     try {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('botsystem_members')
         .delete()
         .eq('botsystem_id', botsystem.id)

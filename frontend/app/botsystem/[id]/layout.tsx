@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { notFound } from 'next/navigation'
 import BotsystemLayout from './botsystem-layout'
+import supabaseClient from '@/lib/supabase-client'
 
 interface BotsystemPageProps {
   params: Promise<{
@@ -12,15 +12,14 @@ interface BotsystemPageProps {
 
 export default async function BotsystemPageLayout({ params, children }: BotsystemPageProps) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await supabaseClient.auth.getUser()
 
   if (!user) {
     redirect('/login')
   }
 
   // Check if user is owner or member of this botsystem
-  const { data: botsystem } = await supabase
+  const { data: botsystem } = await supabaseClient
     .from('botsystems')
     .select('*')
     .eq('id', id)
@@ -33,7 +32,7 @@ export default async function BotsystemPageLayout({ params, children }: Botsyste
   const isOwner = botsystem.owner_id === user.id
   
   if (!isOwner) {
-    const { data: membership } = await supabase
+    const { data: membership } = await supabaseClient
       .from('botsystem_members')
       .select('*')
       .eq('botsystem_id', id)
