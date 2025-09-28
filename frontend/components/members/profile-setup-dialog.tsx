@@ -44,11 +44,6 @@ export default function ProfileSetupDialog({ open, onOpenChange }: ProfileSetupD
         }
     }, [open, profile])
 
-    const resetForm = () => {
-        setDisplayName('')
-        setSelectedColor('blue')
-    }
-
     async function handleSubmit() {
         if (!displayName.trim()) {
             toast.error('Please enter a display name')

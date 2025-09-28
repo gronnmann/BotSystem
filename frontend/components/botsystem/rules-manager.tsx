@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Tables } from '@/lib/database.types'
-import { Plus, BookOpen, Trash2, EyeOff, Eye } from 'lucide-react'
+import { Plus, BookOpen, Trash2 } from 'lucide-react'
 import { useAddRule, useBotSystemRules } from '@/queries/queries'
 import { useQueryClient } from '@tanstack/react-query'
 import { supabaseClient } from '@/lib/supabase-client'
@@ -218,7 +218,7 @@ export default function RulesManager({ botsystemId, isOwner }: RulesManagerProps
                                     <AlertDialogHeader>
                                       <AlertDialogTitle>Fjerne Regel</AlertDialogTitle>
                                       <AlertDialogDescription>
-                                        Er du sikker på at du vil fjerne regelen "{rule.title}"? Dette kan ikke angres.
+                                        Er du sikker på at du vil fjerne regelen &quot;{rule.title}&quot;? Dette kan ikke angres.
                                       </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>

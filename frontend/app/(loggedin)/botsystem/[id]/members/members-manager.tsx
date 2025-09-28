@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { toast } from 'sonner'
 import { TablesInsert } from '@/lib/database.types'
-import { Plus, Users, Crown, Search, Trash2, Loader2 } from 'lucide-react'
+import { Plus, Users, Search, Trash2, Loader2 } from 'lucide-react'
 import { supabaseClient } from '@/lib/supabase-client'
 import { useAuth } from '@/contexts/auth-context'
 import { useBotSystem, useBotsystemMembers, useProfileSearch, useAddBotsystemMember } from '@/queries/queries'

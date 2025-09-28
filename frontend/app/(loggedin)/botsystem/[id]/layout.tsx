@@ -23,7 +23,7 @@ export default function BotsystemPageLayout({ children }: BotsystemPageProps) {
     const { id } = useParams<{ id: string }>()
 
     const { data: botsystem, isLoading: bsLoading } = useBotSystem(id)
-    const { data: members = [], isLoading: membersLoading } = useBotsystemMembers(id)
+    const {isLoading: membersLoading } = useBotsystemMembers(id)
 
     const isOwner = botsystem?.owner_id === user?.id
 

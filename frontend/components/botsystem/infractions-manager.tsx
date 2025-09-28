@@ -6,14 +6,12 @@ import {toast} from 'sonner'
 import {Tables} from '@/lib/database.types'
 import {AlertTriangleIcon, BeerIcon, CalendarIcon, Plus} from 'lucide-react'
 import {useAddPenalty, useBotSystemPenalties, useBotSystemRules, useBotsystemMembers} from '@/queries/queries'
-import {COLOR_CLASSES} from "@/lib/profile-colors"
 import {Button} from '@/components/ui/button'
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Textarea} from '@/components/ui/textarea'
-import {Badge} from '@/components/ui/badge'
 import {Separator} from '@/components/ui/separator'
 import ProfileDisplay from "@/components/profile-display";
 
@@ -224,8 +222,6 @@ export default function InfractionsManager({botsystemId}: InfractionsManagerProp
                 <Card>
                     <CardContent className="p-0">
                         {penalties.map((penalty, index) => {
-                            const rule = rules.find(r => r.id === penalty.rule_id)
-
                             return (
                                 <div key={penalty.id}>
                                     <div className="p-6">
