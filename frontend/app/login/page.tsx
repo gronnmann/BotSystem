@@ -1,29 +1,39 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { supabaseClient} from '@/lib/supabase-client'
+import {useAuth} from "@/contexts/auth-context";
+import {useRouter} from "next/navigation";
+
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
+  const router = useRouter()
+
+  const {user} = useAuth()
+
+  if (!!user) {
+    router.push('/')
+  }
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabaseClient.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
+          emailRedirectTo: `${window.location.origin}/`,
         },
       })
 
       if (error) {
         toast.error(error.message)
       } else {
-        toast.success('Check your email for the login link!')
+        toast.success('Sjekk e-posten din og trykk på lenken der!')
         setEmail('')
       }
     } catch {
