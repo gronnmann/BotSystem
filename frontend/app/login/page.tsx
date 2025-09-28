@@ -3,11 +3,20 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { supabaseClient} from '@/lib/supabase-client'
+import {useAuth} from "@/contexts/auth-context";
+import {useRouter} from "next/navigation";
 
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
+  const router = useRouter()
+
+  const {user} = useAuth()
+
+  if (!!user) {
+    router.push('/')
+  }
 
   async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -24,7 +33,7 @@ export default function LoginPage() {
       if (error) {
         toast.error(error.message)
       } else {
-        toast.success('Check your email for the login link!')
+        toast.success('Sjekk e-posten din og trykk på lenken der!')
         setEmail('')
       }
     } catch {

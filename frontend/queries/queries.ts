@@ -18,19 +18,41 @@ type BotsystemMembersWithRelations = BotsystemMembers & {
 
 
 export function useGetProfile(userId: string | null) {
-    return useQuery<Profile>({
+    return useQuery<Profile | null>({
         enabled: !!userId,
         queryKey: ["profile", userId],
         queryFn: async() => {
             const {data} = await supabaseClient.from("profiles")
             .select("*")
             .eq("user_id", userId!)
-            .single()
-            .throwOnError()
+            .maybeSingle()
+            .throwOnError();
 
             return data;
         }
     })
+}
+
+export function useProfileSearch(query: string) {
+  return useQuery<Profile[]>({
+    queryKey: ["profile", "search", query],
+    queryFn: async () => {
+      if (!query.trim()) {
+        return [];
+      }
+
+      const { data } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .ilike("display_name", `%${query.trim()}%`)
+        .order("display_name", { ascending: true })
+        .limit(10)
+        .throwOnError();
+
+      return data;
+    },
+    enabled: query.trim().length > 0,
+  })
 }
 
 export function useUpsertUserProfile() {
@@ -54,14 +76,14 @@ export function useUpsertUserProfile() {
 
 // fetch a single bot system
 export function useBotSystem(botSystemId: string) {
-  return useQuery<BotSystem>({
+  return useQuery<BotSystem | null>({
     queryKey: ["botsystems", botSystemId],
     queryFn: async () => {
       const { data } = await supabaseClient
         .from("botsystems")
         .select("*")
         .eq("id", botSystemId)
-        .single()
+        .maybeSingle()
         .throwOnError();
 
       return data;
@@ -88,6 +110,28 @@ export function useBotsystemMembers(botSystemId: string) {
     })
 }
 
+export function useAddBotsystemMember() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: TablesInsert<"botsystem_members">) => {
+      const { data: member } = await supabaseClient
+        .from("botsystem_members")
+        .insert(data)
+        .select()
+        .single()
+        .throwOnError();
+
+      return member;
+    },
+    onSuccess: (member: Tables<"botsystem_members">) => {
+      // Invalidate queries related to the bot system members
+      queryClient.invalidateQueries({
+        queryKey: ["botsystems", member.botsystem_id, "members"]
+      });
+    },
+  })
+}
+
 // fetch penalties for a bot system
 export function useBotSystemPenalties(botSystemId: string) {
   return useQuery<PenaltyWithRelations[]>({
@@ -99,7 +143,7 @@ export function useBotSystemPenalties(botSystemId: string) {
           *,
           profiles!penalties_user_id_fkey (*)
         `)
-        .eq("botSystemId", botSystemId)
+        .eq("botsystem_id", botSystemId)
         .throwOnError();
 
       return data;
@@ -116,7 +160,7 @@ export function useBotSystemRules(botSystemId: string) {
       const { data } = await supabaseClient
         .from("rules")
         .select("*")
-        .eq("botSystemId", botSystemId)
+        .eq("botsystem_id", botSystemId) // fixed column name
         .throwOnError();
 
       return data;
