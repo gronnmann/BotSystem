@@ -249,7 +249,7 @@ export default function InfractionsManager({botsystemId}: InfractionsManagerProp
                                             <AlertTriangleIcon className="w-4 h-4 text-red-500" />
                                             <span className="font-semibold">Regel:</span>
                                             <span className="text-muted-foreground">
-                                                {getRuleForPenalty(penalty.rule_id)?.title || 'Ukjent regel'}
+                                                {getRuleForPenalty(penalty.rule_id!)?.title || 'Ukjent regel'}
                                             </span>
                                         </div>
 
