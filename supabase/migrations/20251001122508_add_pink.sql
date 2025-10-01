@@ -1,0 +1,1 @@
+ALTER TYPE profile_color ADD VALUE 'pink';
