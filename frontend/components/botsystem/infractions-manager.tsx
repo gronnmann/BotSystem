@@ -89,6 +89,11 @@ export default function InfractionsManager({botsystemId}: InfractionsManagerProp
 
     const selectedRule = rules.find(r => r.id === selectedRuleId)
 
+    // Helper function to get rule for a penalty
+    function getRuleForPenalty(ruleId: string) {
+        return rules.find(r => r.id === ruleId)
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -238,6 +243,14 @@ export default function InfractionsManager({botsystemId}: InfractionsManagerProp
                                                     {penalty.units === 1 ? 'enhet' : 'enheter'}
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        <div className="mb-3 flex items-center space-x-2">
+                                            <AlertTriangleIcon className="w-4 h-4 text-red-500" />
+                                            <span className="font-semibold">Regel:</span>
+                                            <span className="text-muted-foreground">
+                                                {getRuleForPenalty(penalty.rule_id)?.title || 'Ukjent regel'}
+                                            </span>
                                         </div>
 
                                         {penalty.note && (
