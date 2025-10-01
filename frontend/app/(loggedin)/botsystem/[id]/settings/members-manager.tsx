@@ -101,56 +101,40 @@ export default function MembersManager({ botsystemId }: MembersManagerProps) {
     }
   }
 
-  if (botsystemLoading || membersLoading) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center text-muted-foreground">
-          Laster medlemmer…
-        </CardContent>
-      </Card>
-    )
-  }
-
-  if (!botsystem) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center text-muted-foreground">
-          Botsystem not found
-        </CardContent>
-      </Card>
-    )
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold mb-2">
-            👥 Members
-          </h2>
-          <p className="text-muted-foreground">
-            Manage who can participate in this botsystem
-          </p>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl font-bold flex items-center space-x-2">
+              <Users className="w-6 h-6" />
+              <span>Medlemmer</span>
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Administrer hvem som kan delta i dette botsystemet
+            </p>
+          </div>
+          
+          {isOwner && !showAddForm && (
+            <Button onClick={() => setShowAddForm(true)} className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Legg til medlem
+            </Button>
+          )}
         </div>
-        
-        {isOwner && !showAddForm && (
-          <Button onClick={() => setShowAddForm(true)} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Member
-          </Button>
-        )}
-      </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
 
       {/* Add Member Form */}
       {isOwner && showAddForm && (
         <Card>
           <CardHeader>
-            <CardTitle>Add New Member</CardTitle>
+            <CardTitle>Legg til nytt medlem</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="search">Search Users</Label>
+                <Label htmlFor="search">Søk etter brukere</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -159,7 +143,7 @@ export default function MembersManager({ botsystemId }: MembersManagerProps) {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-9"
-                    placeholder="Search by name..."
+                    placeholder="Søk..."
                     disabled={addMember.isPending}
                   />
                   {searchLoading && (
@@ -210,7 +194,7 @@ export default function MembersManager({ botsystemId }: MembersManagerProps) {
 
               {searchQuery.length > 0 && !searchLoading && availableUsers.length === 0 && (
                 <p className="text-muted-foreground text-center py-4">
-                  No users found matching your search.
+                  Ingen brukere funnet eller alle er allerede medlemmer.
                 </p>
               )}
 
@@ -242,10 +226,10 @@ export default function MembersManager({ botsystemId }: MembersManagerProps) {
                         <div className={`w-4 h-4 rounded-full ${COLOR_CLASSES[userColor]}`} />
                         <div>
                           <h3 className="font-semibold">
-                            {member.profiles?.display_name || 'Unknown User'}
+                            {member.profiles?.display_name || 'Ukjent Bruker'}
                           </h3>
                           <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                            Member
+                            Medlem
                           </Badge>
                         </div>
                       </div>
@@ -322,6 +306,7 @@ export default function MembersManager({ botsystemId }: MembersManagerProps) {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
