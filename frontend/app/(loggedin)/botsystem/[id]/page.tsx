@@ -25,14 +25,14 @@ export default function BotsystemPage() {
         <Leaderboard botsystemId={id} />
       </section>
 
-      {/* Rules Section */}
-      <section>
-        <RulesManager botsystemId={id} isOwner={isOwner} />
-      </section>
-
       {/* Infractions Section */}
       <section>
         <InfractionsManager botsystemId={id} />
+      </section>
+
+      {/* Rules Section */}
+      <section>
+        <RulesManager botsystemId={id} isOwner={isOwner} />
       </section>
     </div>
   )
